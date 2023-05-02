@@ -68,15 +68,23 @@
 # The Dark Knight Rises  Anne Hathaway         Selina Kyle
 
 # Delete existing data, so you'll start fresh each time this script is run.
-# Use `Model.destroy_all` code.
-# TODO!
+
+Studio.destroy_all
+Movie.destroy_all
+Actor.destroy_all
+Role.destroy_all
 
 # Generate models and tables, according to the domain model.
-# TODO!
+# # generated Movie, Studio, Actor, Role models and movies.rb, studios.rb, actors.rb, roles.rb tables in terminal using rails generate model and rails db:migrate commands
 
 # Insert data into the database that reflects the sample data shown above.
-# Do not use hard-coded foreign key IDs.
-# TODO!
+#do not use hard-coded foreign IDs
+#create Warner bros variable in Studios table and insert a row
+warnerbros = Studio.new
+warnerbros["name"] = "Warner Bros."
+warnerbros.save 
+#test entry
+puts "There are #{Studio.all.count} studios who produce batman movies"
 
 # Prints a header for the movies output
 puts "Movies"
