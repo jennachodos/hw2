@@ -79,14 +79,14 @@ Role.destroy_all
 
 # Insert data into the database that reflects the sample data shown above.
 #do not use hard-coded foreign IDs
-#create Warner bros variable in Studios table and insert a row
+#insert warner bros studio row 
 studio = Studio.new
 studio["name"] = "Warner Bros."
 studio.save 
 #create variable specific to warner bros studio
 warnerbros = Studio.find_by({"name" => "Warner Bros."})
 
-#create movie variables and add each of the 3 batman movies as rows in the table 
+#add each of the 3 batman movies as rows in the table 
 batman = Movie.new
 batman["title"]= "Batman Begins"
 batman["year_released"]= 2005
@@ -108,6 +108,11 @@ batman["rated"] = "PG-13"
 batman["studio_id"] = warnerbros["id"]
 batman.save
 
+#add variable name for each batman to reference in roles
+batman1 = Movie.find_by({"title" => "Batman Begins"})
+batman2 = Movie.find_by({"title" => "The Dark Knight"})
+batman3 = Movie.find_by({"title" => "The Dark Knight Rises"})
+
 #add in variables and information for batman begins actors 
 bale = Actor.new
 bale["name"] = "Christian Bale"
@@ -116,6 +121,7 @@ bale.save
 caine = Actor.new
 caine["name"] = "Michael Caine"
 caine.save
+caine = Actor.find_by({"name" => "Michael Caine"})
 
 neeson = Actor.new
 neeson["name"] = "Liam Neeson"
@@ -129,14 +135,12 @@ oldman = Actor.new
 oldman["name"] = "Gary Oldman"
 oldman.save
 
-#add variable for Batman Begins
-batman1 = Movie.find_by({"title" => "Batman Begins"})
 #add batman begin roles
-bruce = Role.new
-bruce["character_name"] = "Bruce Wayne"
-bruce["movie_id"] = batman1["id"]
-bruce["actor_id"] = bale["id"]
-bruce.save
+wayne = Role.new
+wayne["character_name"] = "Bruce Wayne"
+wayne["movie_id"] = batman1["id"]
+wayne["actor_id"] = bale["id"]
+wayne.save
 
 alfred = Role.new
 alfred["character_name"] = "Alfred"
@@ -156,16 +160,14 @@ rachel["movie_id"] = batman1["id"]
 rachel["actor_id"] = holmes["id"]
 rachel.save
 
-commisioner = Role.new
-commisioner["character_name"] = "Commissioner Gordon"
-commisioner["movie_id"] = batman1["id"]
-commisioner["actor_id"] = oldman["id"]
-commisioner.save
+commissioner = Role.new
+commissioner["character_name"] = "Commissioner Gordon"
+commissioner["movie_id"] = batman1["id"]
+commissioner["actor_id"] = oldman["id"]
+commissioner.save
 
-#add variable for The Dark Knight
-batman2 = Movie.find_by({"title" => "The Dark Knight"})
 
-# add actors and roles for the dark knight
+# add actors and roles rows for The Dark Knight
 ledger = Actor.new 
 ledger["name"] = "Heath Ledger"
 ledger.save
@@ -208,16 +210,14 @@ rachel2["movie_id"] = batman2["id"]
 rachel2["actor_id"] = gyllenhaal["id"]
 rachel2.save
 
-#add variable for The Dark Knight Rises
-batman3 = Movie.find_by({"title" => "The Dark Knight Rises"})
-# add actors and roles for the dark knight rises
+# add actors and roles rows for the dark knight rises
 
 hardy = Actor.new
 hardy["name"] = "Tom Hardy"
 hardy.save
 
 gordonlevitt = Actor.new
-gordonlevitt["name"] = "Josheph Gordon-Levvitt"
+gordonlevitt["name"] = "Josheph Gordon-Levitt"
 gordonlevitt.save
 
 hathaway = Actor.new
@@ -243,7 +243,7 @@ bane["actor_id"] = hardy["id"]
 bane.save
 
 john = Role.new
-john["character_name"] = "John"
+john["character_name"] = "John Blake"
 john["movie_id"] = batman3["id"]
 john["actor_id"] = gordonlevitt["id"]
 john.save
@@ -255,8 +255,6 @@ selina["actor_id"] = hathaway["id"]
 selina.save
 
 
-
-
 # Prints a header for the movies output
 puts "Movies"
 puts "======"
@@ -265,24 +263,19 @@ puts ""
 
 # Query the movies data and loop through the results to display the movies output.
 # Query movies data
-batmanmovies = Movie.where({"studio_id" => warnerbros["id"]})
-puts batmanmovies.inspect
+batmanmovies = Movie.all
 
 for batman in batmanmovies
+    #query to find the studio for each movie 
+    studio = Studio.find_by({"id" => batman["studio_id"]})
     #read each movie title, year, and rated
     movie_title = batman["title"]
     movie_year_released = batman["year_released"]
     movie_rating = batman["rated"]
+    movie_studio = studio["name"]
     # display movie title, year and rating
-    puts "#{movie_title} #{movie_year_released} #{movie_rating}"
+    puts "#{movie_title} #{movie_year_released} #{movie_rating} #{movie_studio}"
 end
-
-
-puts "There are #{batmanmovies.count} Batman movies at Warner Bro Studios"
-
-
-#puts "not sure what this is going to input: #{batman_begins.count}"
-
 
 # Prints a header for the cast output
 puts ""
@@ -291,5 +284,18 @@ puts "========"
 puts ""
 
 # Query the cast data and loop through the results to display the cast output for each movie.
-batman_begins = Role.where({"movie_id" => batman1["id"]})
-puts batman_begins.inspect
+leading_actors = Role.all
+#puts leading_actors.inspect
+
+for actor in leading_actors
+    # query to find movie and studio for each actor/cast member 
+    movieid = Movie.find_by({"id" => actor["movie_id"]})
+    actorid = Actor.find_by({"id" => actor["actor_id"]})
+    #read each movie and corresponding actors names, character name
+    movie_name = movieid ["title"]
+    actor_name =  actorid["name"]
+    character_name = actor["character_name"]
+    #display title, actor name and character name
+    puts "#{movie_name} #{actor_name} #{character_name}"
+end
+
